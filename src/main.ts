@@ -1,5 +1,5 @@
 import { app } from "./application/app";
-import sequelizeConnection from "./config/database"; // Sesuaikan dengan path yang benar
+import sequelizeConnection from "./config/database";
 
 const startApp = async () => {
   try {
