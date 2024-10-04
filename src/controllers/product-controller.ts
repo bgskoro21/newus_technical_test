@@ -27,8 +27,15 @@ class ProductController {
   private upload = multer({
     storage: this.storage,
     fileFilter: (req, file, cb) => {
-      console.log("File received in Multer:", file);
-      cb(null, true);
+      const fileTypes = /jpeg|jpg|png|gif/;
+      const mimetype = fileTypes.test(file.mimetype); // Cek MIME
+      const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+
+      if (mimetype && extname) {
+        return cb(null, true); // File valid
+      } else {
+        cb(new Error("The file must be an image!"));
+      }
     },
   });
 
