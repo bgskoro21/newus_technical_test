@@ -1,4 +1,5 @@
 import Category from "../database/models/Category";
+import Product from "../database/models/Product";
 import { CategoryValidation } from "../validation/category-validation";
 import { validate } from "../validation/validation";
 
@@ -16,7 +17,11 @@ class CategoryService {
 
   // Mendapatkan semua Categories
   public async getAllCategories(): Promise<Category[]> {
-    const categories = await Category.findAll();
+    const categories = await Category.findAll({
+      include: {
+        model: Product,
+      },
+    });
     return categories;
   }
 
