@@ -1,6 +1,5 @@
-import { Model, DataTypes, Optional, Association } from "sequelize";
-import sequelizeConnection from "../../config/database";
 import Category from "./Category";
+import { Model, BelongsTo, AutoIncrement, Column, ForeignKey, PrimaryKey, Table, DataType } from "sequelize-typescript";
 
 interface ProductAttributes {
   id: number;
@@ -12,61 +11,37 @@ interface ProductAttributes {
   updatedAt?: Date;
 }
 
-interface ProductCreationAttributes extends Optional<ProductAttributes, "id"> {}
-
-class Product extends Model<ProductAttributes, ProductCreationAttributes> implements ProductAttributes {
-  public id!: number;
-  public name!: string;
-  public desc?: string;
-  public image?: string;
-  public category_id!: string;
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
-
-  public readonly category?: Category;
-
-  public static associations: {
-    category: Association<Product, Category>;
-  };
+interface ProductCreationAttributes {
+  name: string;
+  desc?: string;
+  image?: string;
+  category_id: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-Product.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    desc: {
-      type: DataTypes.TEXT,
-      allowNull: true,
-    },
-    image: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    category_id: {
-      type: DataTypes.UUID,
-      allowNull: false,
-      references: {
-        model: "Categories",
-        key: "id",
-      },
-      onUpdate: "CASCADE",
-      onDelete: "RESTRICT",
-    },
-  },
-  {
-    sequelize: sequelizeConnection,
-    tableName: "Products",
-    modelName: "Product",
-    timestamps: true,
-  }
-);
-Product.belongsTo(Category, { foreignKey: "category_id" });
+@Table({ tableName: "Products", timestamps: true })
+class Product extends Model<ProductAttributes, ProductCreationAttributes> {
+  @PrimaryKey
+  @AutoIncrement
+  @Column(DataType.INTEGER)
+  id!: number;
+
+  @Column(DataType.STRING)
+  name!: string;
+
+  @Column(DataType.STRING)
+  desc!: string;
+
+  @Column(DataType.STRING)
+  image!: string;
+
+  @ForeignKey(() => Category)
+  @Column(DataType.STRING)
+  category_id!: string;
+
+  @BelongsTo(() => Category)
+  category!: Category;
+}
 
 export default Product;

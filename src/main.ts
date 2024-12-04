@@ -6,9 +6,8 @@ const startApp = async () => {
     await sequelizeConnection.authenticate();
     console.log("Connection to the database has been established successfully.");
 
-    const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
+    app.listen(3000, () => {
+      console.log("Server is running on http://localhost:3000");
     });
   } catch (error) {
     console.error("Unable to connect to the database:", error);

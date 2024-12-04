@@ -1,5 +1,4 @@
-import { Model, DataTypes, Optional, Association } from "sequelize";
-import sequelizeConnection from "../../config/database";
+import { Model, Column, DataType, HasMany, PrimaryKey, Table } from "sequelize-typescript";
 import Product from "./Product";
 
 interface CategoryAttributes {
@@ -9,39 +8,24 @@ interface CategoryAttributes {
   updatedAt?: Date;
 }
 
-interface CategoryCreationAttributes extends Optional<CategoryAttributes, "id"> {}
-
-class Category extends Model<CategoryAttributes, CategoryCreationAttributes> implements CategoryAttributes {
-  public id!: string;
-  public name!: string;
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
-
-  public readonly products?: Product[];
-
-  public static associations: {
-    products: Association<Category, Product>;
-  };
+interface CategoryCreationAttributes {
+  name: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-Category.init(
-  {
-    id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true,
-    },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-  },
-  {
-    sequelize: sequelizeConnection,
-    tableName: "Categories",
-    modelName: "Category",
-    timestamps: true,
-  }
-);
+@Table({ tableName: "Categories", timestamps: true })
+export default class Category extends Model<CategoryAttributes, CategoryCreationAttributes> {
+  @PrimaryKey
+  @Column({
+    type: DataType.UUIDV4,
+    defaultValue: DataType.UUIDV4,
+  })
+  id!: string;
 
-export default Category;
+  @Column(DataType.STRING)
+  name!: string;
+
+  @HasMany(() => Product)
+  products!: Product[];
+}
